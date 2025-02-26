@@ -1,5 +1,5 @@
 streamlit>=1.28.0
 supabase>=2.0
 pandas>=2.1.0
-plotly-express>=5.17.0
+plotly-express==0.4.18  # OR plotly-express==0.4.1 (try this first)
 bcrypt>=4.0
