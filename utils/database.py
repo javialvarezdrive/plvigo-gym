@@ -6,7 +6,7 @@ import streamlit as st # Importar streamlit para usar st.error y logging
 def init_supabase():
     # **¡¡¡CREDENTIALES DE SUPABASE HARDCODEADAS - NO RECOMENDADO PARA PRODUCCIÓN!!!**
     SUPABASE_URL = "https://anqvjvjpcokkwspaecfc.supabase.co"
-    SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFucXZqdmpwY29ra3dzcGFlY2ZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1OTMyMDcsImV4cCI6MjA1NjE2OTIwN30.w4Y6sE8UyIA22pt5QAYQlcsWZceksF4AKF0zm7Jv7Lk"
+    SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFucXZqdmpwY29ra3dzcGFlY2ZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE7NDA1OTMyMDcsImV4cCI6MjA1NjE2OTIwN30.w4Y6sE8UyIA22pt5QAYQlcsWZceksF4AKF0zm7Jv7Lk"
     return supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 
 supabase_client = init_supabase()
@@ -38,7 +38,8 @@ def get_monitores():
 
 def get_monitor_by_username(username):
     """Obtiene un monitor por su nombre de usuario."""
-    response = supabase_client.table("monitores").select("*").eq("username", username).single().execute()
+    # **POSIBLE CORRECCIÓN: Cambiado "username" a "user_name" (verifica tu base de datos)**
+    response = supabase_client.table("monitores").select("*").eq("user_name", username).single().execute()
     # **MANEJO DE ERRORES REVISADO**
     if response and hasattr(response, 'error') and response.error:
         error_message = response.error.message
