@@ -6,7 +6,7 @@ import streamlit as st # Importar streamlit para usar st.error y logging
 def init_supabase():
     # **¡¡¡CREDENTIALES DE SUPABASE HARDCODEADAS - NO RECOMENDADO PARA PRODUCCIÓN!!!**
     SUPABASE_URL = "https://anqvjvjpcokkwspaecfc.supabase.co"
-    SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFucXZqdmpwY29ra3dzcGFlY2ZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE7NDA1OTMyMDcsImV4cCI6MjA1NjE2OTIwN30.w4Y6sE8UyIA22pt5QAYQlcsWZceksF4AKF0zm7Jv7Lk"
+    SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFucXZqdmpwY29ra3dzcGFlY2ZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1OTMyMDcsImV4cCI6MjA1NjE2OTIwN30.w4Y6sE8UyIA22pt5QAYQlcsWZceksF4AKF0zm7Jv7Lk"
     return supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 
 supabase_client = init_supabase()
@@ -38,8 +38,14 @@ def get_monitores():
 
 def get_monitor_by_username(username):
     """Obtiene un monitor por su nombre de usuario."""
-    # **POSIBLE CORRECCIÓN: Cambiado "username" a "user_name" (verifica tu base de datos)**
-    response = supabase_client.table("monitores").select("*").eq("user_name", username).single().execute()
+    # **REVERTIDO: Volvemos a usar "username" como nombre de columna (¡es el correcto!)**
+    query = supabase_client.table("monitores").select("*").eq("username", username).single()
+
+    # **LOGGING DE LA CONSULTA SQL RAW ANTES DE EJECUTARLA**
+    print(f"**RAW SQL QUERY (get_monitor_by_username):** {query}") # Imprime la consulta SQL RAW
+
+    response = query.execute() # Ejecuta la consulta
+
     # **MANEJO DE ERRORES REVISADO**
     if response and hasattr(response, 'error') and response.error:
         error_message = response.error.message
@@ -77,5 +83,5 @@ def get_actividades_programadas(fecha_inicio, fecha_fin):
 
 def programar_actividad(member_id, actividad_tipo_id, fecha, turno, monitor_id):
     """Programa una actividad para un miembro."""
-    response = supabase_client.table("schedule").insert({"member_id": member_id, "activity_id": actividad_tipo_id, "fecha": fecha, "turno": turno, "monitor_id": monitor_id}).execute()
+    response = supabase_client.table("schedule").insert({"member_id": member_id, "activity_id": actividad_tipo_id, fecha": fecha, turno": turno, monitor_id": monitor_id}).execute()
     return response
