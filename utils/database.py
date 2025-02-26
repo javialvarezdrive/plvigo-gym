@@ -1,6 +1,7 @@
 # utils/database.py
 import supabase
 import pandas as pd
+import streamlit as st # Importar streamlit para usar st.error y logging
 
 def init_supabase():
     # **¡¡¡CREDENTIALES DE SUPABASE HARDCODEADAS - NO RECOMENDADO PARA PRODUCCIÓN!!!**
@@ -14,11 +15,19 @@ def check_supabase_connection():
     """Verifica la conexión a Supabase."""
     try:
         response = supabase_client.table("actividades_tipos").select("id").limit(1).execute()
-        if response.error:
-            return False, response.error.message
+        # **MANEJO DE ERRORES REVISADO**
+        if response and hasattr(response, 'error') and response.error:
+            error_message = response.error.message
+            print(f"**CHECK_SUPABASE_CONNECTION ERROR:** {error_message}") # Log en consola/logs de Streamlit Cloud
+            st.error(f"Error al conectar con Supabase (check_supabase_connection): {error_message}") # Mostrar error en la UI
+            return False, error_message
         return True, None
     except Exception as e:
-        return False, str(e)
+        error_message = str(e)
+        print(f"**CHECK_SUPABASE_CONNECTION EXCEPTION:** {error_message}") # Log en consola/logs de Streamlit Cloud
+        st.error(f"Excepción al conectar con Supabase (check_supabase_connection): {error_message}") # Mostrar error en la UI
+        return False, error_message
+
 
 def get_monitores():
     """Obtiene todos los monitores."""
@@ -30,9 +39,14 @@ def get_monitores():
 def get_monitor_by_username(username):
     """Obtiene un monitor por su nombre de usuario."""
     response = supabase_client.table("monitores").select("*").eq("username", username).single().execute()
-    if response.error:
-        return None, response.error.message
+    # **MANEJO DE ERRORES REVISADO**
+    if response and hasattr(response, 'error') and response.error:
+        error_message = response.error.message
+        print(f"**GET_MONITOR_BY_USERNAME ERROR:** {error_message}") # Log en consola/logs
+        st.error(f"Error al obtener monitor por username: {error_message}") # Mostrar error en UI
+        return None, error_message
     return response.data, None
+
 
 def get_actividades_tipos():
     """Obtiene todos los tipos de actividad."""
