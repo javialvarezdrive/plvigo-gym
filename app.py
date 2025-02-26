@@ -10,8 +10,6 @@ st.set_page_config(page_title="Gestión Gimnasio Nuevo", page_icon="💪")
 
 def main():
     st.title("Gestión del Gimnasio")
-    mensaje_prueba_utils = hola_desde_utils()
-st.write(f"Mensaje de prueba del módulo utils: {mensaje_prueba_utils}")
 
     # Inicialización de Supabase y verificación de conexión
     if 'supabase_client' not in st.session_state:
@@ -29,9 +27,19 @@ st.write(f"Mensaje de prueba del módulo utils: {mensaje_prueba_utils}")
         st.session_state['monitor'] = None
 
     if not st.session_state['logged_in']:
-        login_section()
+        login_page()
     else:
-        app_content()
+        menu_options = ["Registrar Miembro", "Programar Actividad", "Reportes", "Cerrar Sesión"]
+        menu = st.sidebar.radio("Navegación", options=menu_options)
+        if menu == "Registrar Miembro":
+            register_member_page()
+        elif menu == "Agendar Actividad":
+            schedule_activity_page()
+        elif menu == "Reportes":
+            report_page()
+        elif menu == "Cerrar Sesión":
+            st.session_state['logged_in'] = False
+            st.experimental_rerun()
 
 def login_section():
     st.header("Inicio de Sesión de Monitor")
