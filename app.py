@@ -3,12 +3,15 @@ import streamlit as st
 import datetime
 import pandas as pd
 import plotly_express as px
-from utils import database
+from utils.database import hola_desde_utils  # Importar la función de prueba
+#from utils import database
 
 st.set_page_config(page_title="Gestión Gimnasio Nuevo", page_icon="💪")
 
 def main():
     st.title("Gestión del Gimnasio")
+    mensaje_prueba_utils = hola_desde_utils()
+st.write(f"Mensaje de prueba del módulo utils: {mensaje_prueba_utils}")
 
     # Inicialización de Supabase y verificación de conexión
     if 'supabase_client' not in st.session_state:
